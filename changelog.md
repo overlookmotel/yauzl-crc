@@ -7,3 +7,7 @@
 ## 1.0.1
 
 * Fix: Stream error propagation
+
+## Next
+
+* Update `yauzl-clone` dependency

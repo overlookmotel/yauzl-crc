@@ -16,7 +16,7 @@
   "dependencies": {
     "buffer-crc32": "^0.2.13",
     "yauzl": "^2.9.1",
-    "yauzl-clone": "^1.0.1"
+    "yauzl-clone": "^1.0.2"
   },
   "devDependencies": {
     "chai": "^4.1.2",
