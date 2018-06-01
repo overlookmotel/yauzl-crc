@@ -11,3 +11,7 @@
 ## 1.0.2
 
 * Update `yauzl-clone` dependency
+
+## Next
+
+* Update `yauzl-clone` dependency
