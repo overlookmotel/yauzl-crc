@@ -15,3 +15,4 @@
 ## Next
 
 * Update `yauzl-clone` dependency
+* Run Travis CI tests on Node v10
