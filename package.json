@@ -1,6 +1,6 @@
 {
   "name": "yauzl-crc",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "yauzl unzipping with CRC32 check",
   "main": "./lib/",
   "author": {
