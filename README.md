@@ -6,9 +6,6 @@
 
 [![NPM version](https://img.shields.io/npm/v/yauzl-crc.svg)](https://www.npmjs.com/package/yauzl-crc)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/overlookmotel/yauzl-crc/test.yml?branch=master)](https://github.com/overlookmotel/yauzl-crc/actions)
-[![Dependency Status](https://img.shields.io/david/overlookmotel/yauzl-crc.svg)](https://david-dm.org/overlookmotel/yauzl-crc)
-[![Dev dependency Status](https://img.shields.io/david/dev/overlookmotel/yauzl-crc.svg)](https://david-dm.org/overlookmotel/yauzl-crc)
-[![Greenkeeper badge](https://badges.greenkeeper.io/overlookmotel/yauzl-crc.svg)](https://greenkeeper.io/)
 [![Coverage Status](https://img.shields.io/coveralls/overlookmotel/yauzl-crc/master.svg)](https://coveralls.io/r/overlookmotel/yauzl-crc)
 
 ## Usage
