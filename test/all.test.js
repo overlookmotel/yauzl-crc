@@ -3,23 +3,19 @@
  * Tests
  * ------------------*/
 
-/* eslint-disable no-invalid-this */
+/* eslint-disable jest/no-done-callback */
+/* eslint jest/expect-expect: ["error", {"assertFunctionNames": [
+	"expect", "testOpen", "testFromFd", "testFromBuffer", "testFromRandomAccessReader"
+]}] */
 
 'use strict';
 
 // Modules
-const chai = require('chai'),
-	{expect} = chai,
-	pathJoin = require('path').join,
+const pathJoin = require('path').join,
 	yauzlOriginal = require('yauzl'),
 	yauzl = require('../index.js');
 
-// Init
-chai.config.includeStack = true;
-
 // Tests
-
-/* global describe, it, beforeEach, afterEach */
 
 const PATH = pathJoin(__dirname, 'test.zip'),
 	CRC = 1081533905;
@@ -27,47 +23,56 @@ const PATH = pathJoin(__dirname, 'test.zip'),
 describe('Cloning', () => {
 	describe('default', () => {
 		it('clones yauzl', () => {
-			expect(yauzl).not.to.equal(yauzlOriginal);
+			expect(yauzl).not.toBe(yauzlOriginal);
 		});
 
 		it('subclasses yauzl.ZipFile', () => {
-			expect(yauzl.ZipFile).not.to.equal(yauzlOriginal.ZipFile);
+			expect(yauzl.ZipFile).not.toBe(yauzlOriginal.ZipFile);
 
 			const zipFile = Object.create(yauzl.ZipFile.prototype);
-			expect(zipFile).to.be.instanceof(yauzl.ZipFile);
-			expect(zipFile).to.be.instanceof(yauzlOriginal.ZipFile);
+			expect(zipFile).toBeInstanceOf(yauzl.ZipFile);
+			expect(zipFile).toBeInstanceOf(yauzlOriginal.ZipFile);
 		});
 	});
 
 	describe('.useYauzl()', () => {
-		beforeEach(function() {
-			this.yauzl = yauzl.useYauzl(yauzlOriginal);
+		let patchedYauzl;
+		beforeEach(() => {
+			patchedYauzl = yauzl.useYauzl(yauzlOriginal);
 		});
 
-		it('clones yauzl', function() {
-			expect(this.yauzl).not.to.equal(yauzlOriginal);
+		it('clones yauzl', () => {
+			expect(patchedYauzl).not.toBe(yauzlOriginal);
 		});
 
-		it('subclasses yauzl.ZipFile', function() {
-			const {ZipFile} = this.yauzl;
-			expect(ZipFile).not.to.equal(yauzlOriginal.ZipFile);
+		it('subclasses yauzl.ZipFile', () => {
+			const {ZipFile} = patchedYauzl;
+			expect(ZipFile).not.toBe(yauzlOriginal.ZipFile);
 
 			const zipFile = Object.create(ZipFile.prototype);
-			expect(zipFile).to.be.instanceof(ZipFile);
-			expect(zipFile).to.be.instanceof(yauzlOriginal.ZipFile);
+			expect(zipFile).toBeInstanceOf(ZipFile);
+			expect(zipFile).toBeInstanceOf(yauzlOriginal.ZipFile);
 		});
 	});
 });
 
 describe('`.openReadStream()`', () => {
-	describe('without validateCrc option', () => {
-		afterEach(function(cb) {
-			if (this.zipFile) closeZip(this.zipFile, cb);
-		});
+	let zipToClose;
+	beforeEach(() => {
+		zipToClose = null;
+	});
+	afterEach((cb) => {
+		if (zipToClose) {
+			zipToClose.on('close', () => cb());
+			zipToClose.on('error', cb);
+			zipToClose.close();
+		}
+	});
 
-		it('does not check CRC', function(cb) {
+	describe('without validateCrc option', () => {
+		it('does not check CRC', (cb) => { // eslint-disable-line jest/expect-expect
 			getEntry(false, (err, {zipFile, entry}) => {
-				this.zipFile = zipFile;
+				zipToClose = zipFile;
 				if (err) {
 					cb(err);
 					return;
@@ -90,13 +95,9 @@ describe('`.openReadStream()`', () => {
 	});
 
 	describe('with validateCrc option', () => {
-		afterEach(function(cb) {
-			if (this.zipFile) closeZip(this.zipFile, cb);
-		});
-
-		it('stream emits error if CRC incorrect', function(cb) {
+		it('stream emits error if CRC incorrect', (cb) => {
 			getEntry(true, (err, {zipFile, entry}) => {
-				this.zipFile = zipFile;
+				zipToClose = zipFile;
 				if (err) {
 					cb(err);
 					return;
@@ -114,16 +115,21 @@ describe('`.openReadStream()`', () => {
 					stream.on('data', () => {});
 					stream.on('end', () => cb(new Error('Completed without error')));
 					stream.on('error', (err) => { // eslint-disable-line no-shadow
-						expect(err.message).to.equal(`CRC32 does not match - expected ${wrongCrc}, got ${CRC}`);
-						cb();
+						try {
+							expect(err).toBeInstanceOf(Error);
+							expect(err.message).toBe(`CRC32 does not match - expected ${wrongCrc}, got ${CRC}`);
+							cb();
+						} catch (e) {
+							cb(e);
+						}
 					});
 				});
 			});
 		});
 
-		it('stream does not emit error if CRC correct', function(cb) {
+		it('stream does not emit error if CRC correct', (cb) => { // eslint-disable-line jest/expect-expect
 			getEntry(true, (err, {zipFile, entry}) => {
-				this.zipFile = zipFile;
+				zipToClose = zipFile;
 				if (err) {
 					cb(err);
 					return;
@@ -158,10 +164,4 @@ function getEntry(validateCrc, cb) {
 		zipFile.on('entry', entry => cb(null, {zipFile, entry}));
 		zipFile.readEntry();
 	});
-}
-
-function closeZip(zipFile, cb) {
-	zipFile.on('close', () => cb());
-	zipFile.on('error', cb);
-	zipFile.close();
 }
