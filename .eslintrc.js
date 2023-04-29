@@ -1,5 +1,5 @@
 /* --------------------
- * yauzl-clone module
+ * yauzl-crc module
  * ESLint config
  * ------------------*/
 
