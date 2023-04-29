@@ -1,12 +1,8 @@
-# yauzl-crc.js
-
-# yauzl unzipping with CRC32 check
-
-## Current status
-
 [![NPM version](https://img.shields.io/npm/v/yauzl-crc.svg)](https://www.npmjs.com/package/yauzl-crc)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/overlookmotel/yauzl-crc/test.yml?branch=master)](https://github.com/overlookmotel/yauzl-crc/actions)
 [![Coverage Status](https://img.shields.io/coveralls/overlookmotel/yauzl-crc/master.svg)](https://coveralls.io/r/overlookmotel/yauzl-crc)
+
+# `yauzl` unzipping with CRC32 check
 
 ## Usage
 
@@ -20,7 +16,7 @@ npm install yauzl-crc
 
 ### Checking CRC32 values
 
-This module is identical to yauzl, except it adds an option `validateCrc`.
+This module is identical to `yauzl`, except it adds an option `validateCrc`.
 
 ```js
 const yauzl = require('yauzl-crc');
@@ -54,7 +50,7 @@ The yauzl object passed is cloned before it is modified, unless you set `clone` 
 
 ```js
 const yauzl = require('yauzl-crc').useYauzl(yauzlFork, { clone: false });
-console.log(yauzl == yauzlFork); // true
+console.log(yauzl === yauzlFork); // true
 ```
 
 ## Versioning
@@ -80,6 +76,6 @@ If you discover a bug, please raise an issue on Github. https://github.com/overl
 Pull requests are very welcome. Please:
 
 * ensure all tests pass before submitting PR
-* add an entry to changelog
 * add tests for new features
 * document new functionality/API additions in README
+* do not add an entry to Changelog (Changelog is created when cutting releases)
