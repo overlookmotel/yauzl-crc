@@ -3,6 +3,8 @@
  * Tests
  * ------------------*/
 
+/* eslint-disable no-invalid-this */
+
 'use strict';
 
 // Modules
@@ -17,19 +19,18 @@ chai.config.includeStack = true;
 
 // Tests
 
-/* jshint expr: true */
 /* global describe, it, beforeEach, afterEach */
 
 const PATH = pathJoin(__dirname, 'test.zip'),
 	CRC = 1081533905;
 
-describe('Cloning', function() {
-	describe('default', function() {
-		it('clones yauzl', function() {
+describe('Cloning', () => {
+	describe('default', () => {
+		it('clones yauzl', () => {
 			expect(yauzl).not.to.equal(yauzlOriginal);
 		});
 
-		it('subclasses yauzl.ZipFile', function() {
+		it('subclasses yauzl.ZipFile', () => {
 			expect(yauzl.ZipFile).not.to.equal(yauzlOriginal.ZipFile);
 
 			const zipFile = Object.create(yauzl.ZipFile.prototype);
@@ -38,7 +39,7 @@ describe('Cloning', function() {
 		});
 	});
 
-	describe('.useYauzl()', function() {
+	describe('.useYauzl()', () => {
 		beforeEach(function() {
 			this.yauzl = yauzl.useYauzl(yauzlOriginal);
 		});
@@ -58,8 +59,8 @@ describe('Cloning', function() {
 	});
 });
 
-describe('`.openReadStream()`', function() {
-	describe('without validateCrc option', function() {
+describe('`.openReadStream()`', () => {
+	describe('without validateCrc option', () => {
 		afterEach(function(cb) {
 			if (this.zipFile) closeZip(this.zipFile, cb);
 		});
@@ -67,12 +68,18 @@ describe('`.openReadStream()`', function() {
 		it('does not check CRC', function(cb) {
 			getEntry(false, (err, {zipFile, entry}) => {
 				this.zipFile = zipFile;
-				if (err) return cb(err);
+				if (err) {
+					cb(err);
+					return;
+				}
 
 				entry.crc32 = 123;
 
-				zipFile.openReadStream(entry, (err, stream) => {
-					if (err) return cb(err);
+				zipFile.openReadStream(entry, (err, stream) => { // eslint-disable-line no-shadow
+					if (err) {
+						cb(err);
+						return;
+					}
 
 					stream.on('data', () => {});
 					stream.on('end', () => cb());
@@ -82,7 +89,7 @@ describe('`.openReadStream()`', function() {
 		});
 	});
 
-	describe('with validateCrc option', function() {
+	describe('with validateCrc option', () => {
 		afterEach(function(cb) {
 			if (this.zipFile) closeZip(this.zipFile, cb);
 		});
@@ -90,17 +97,23 @@ describe('`.openReadStream()`', function() {
 		it('stream emits error if CRC incorrect', function(cb) {
 			getEntry(true, (err, {zipFile, entry}) => {
 				this.zipFile = zipFile;
-				if (err) return cb(err);
+				if (err) {
+					cb(err);
+					return;
+				}
 
 				const wrongCrc = 123;
 				entry.crc32 = wrongCrc;
 
-				zipFile.openReadStream(entry, (err, stream) => {
-					if (err) return cb(err);
+				zipFile.openReadStream(entry, (err, stream) => { // eslint-disable-line no-shadow
+					if (err) {
+						cb(err);
+						return;
+					}
 
 					stream.on('data', () => {});
 					stream.on('end', () => cb(new Error('Completed without error')));
-					stream.on('error', err => {
+					stream.on('error', (err) => { // eslint-disable-line no-shadow
 						expect(err.message).to.equal(`CRC32 does not match - expected ${wrongCrc}, got ${CRC}`);
 						cb();
 					});
@@ -111,10 +124,16 @@ describe('`.openReadStream()`', function() {
 		it('stream does not emit error if CRC correct', function(cb) {
 			getEntry(true, (err, {zipFile, entry}) => {
 				this.zipFile = zipFile;
-				if (err) return cb(err);
+				if (err) {
+					cb(err);
+					return;
+				}
 
-				zipFile.openReadStream(entry, (err, stream) => {
-					if (err) return cb(err);
+				zipFile.openReadStream(entry, (err, stream) => { // eslint-disable-line no-shadow
+					if (err) {
+						cb(err);
+						return;
+					}
 
 					stream.on('data', () => {});
 					stream.on('end', () => cb());
@@ -129,10 +148,13 @@ describe('`.openReadStream()`', function() {
  * Helper functions
  */
 function getEntry(validateCrc, cb) {
-	yauzl.open(PATH, {validateCrc, autoClose: false, lazyEntries: true}, function(err, zipFile) {
-		if (err) return cb(err);
+	yauzl.open(PATH, {validateCrc, autoClose: false, lazyEntries: true}, (err, zipFile) => {
+		if (err) {
+			cb(err);
+			return;
+		}
 
-		zipFile.on('error', err => cb(err, {zipFile}));
+		zipFile.on('error', err => cb(err, {zipFile})); // eslint-disable-line no-shadow
 		zipFile.on('entry', entry => cb(null, {zipFile, entry}));
 		zipFile.readEntry();
 	});
