@@ -10,7 +10,7 @@ const chai = require('chai'),
 	{expect} = chai,
 	pathJoin = require('path').join,
 	yauzlOriginal = require('yauzl'),
-	yauzl = require('../lib/');
+	yauzl = require('../index.js');
 
 // Init
 chai.config.includeStack = true;
