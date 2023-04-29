@@ -3,6 +3,9 @@
   "version": "1.0.3",
   "description": "yauzl unzipping with CRC32 check",
   "main": "index.js",
+  "files": [
+    "lib/**/*.js"
+  ],
   "author": {
     "name": "Overlook Motel"
   },
