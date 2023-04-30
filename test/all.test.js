@@ -18,6 +18,7 @@ const pathJoin = require('path').join,
 // Tests
 
 const PATH = pathJoin(__dirname, 'test.zip'),
+	CONTENT = '0123456789\n',
 	CRC = 1081533905;
 
 describe('Cloning', () => {
@@ -70,7 +71,7 @@ describe('`.openReadStream()`', () => {
 	});
 
 	describe('without validateCrc option', () => {
-		it('does not check CRC', (cb) => { // eslint-disable-line jest/expect-expect
+		it('does not check CRC', (cb) => {
 			getEntry(false, (err, {zipFile, entry}) => {
 				zipToClose = zipFile;
 				if (err) {
@@ -86,8 +87,16 @@ describe('`.openReadStream()`', () => {
 						return;
 					}
 
-					stream.on('data', () => {});
-					stream.on('end', () => cb());
+					const chunks = [];
+					stream.on('data', chunk => chunks.push(chunk));
+					stream.on('end', () => {
+						try {
+							expect(Buffer.concat(chunks).toString()).toBe(CONTENT);
+							cb();
+						} catch (e) {
+							cb(e);
+						}
+					});
 					stream.on('error', cb);
 				});
 			});
@@ -127,7 +136,7 @@ describe('`.openReadStream()`', () => {
 			});
 		});
 
-		it('stream does not emit error if CRC correct', (cb) => { // eslint-disable-line jest/expect-expect
+		it('stream does not emit error if CRC correct', (cb) => {
 			getEntry(true, (err, {zipFile, entry}) => {
 				zipToClose = zipFile;
 				if (err) {
@@ -141,8 +150,16 @@ describe('`.openReadStream()`', () => {
 						return;
 					}
 
-					stream.on('data', () => {});
-					stream.on('end', () => cb());
+					const chunks = [];
+					stream.on('data', chunk => chunks.push(chunk));
+					stream.on('end', () => {
+						try {
+							expect(Buffer.concat(chunks).toString()).toBe(CONTENT);
+							cb();
+						} catch (e) {
+							cb(e);
+						}
+					});
 					stream.on('error', cb);
 				});
 			});
