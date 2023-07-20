@@ -17,7 +17,7 @@
     "url": "https://github.com/overlookmotel/yauzl-crc/issues"
   },
   "dependencies": {
-    "@node-rs/crc32": "^1.7.0",
+    "@node-rs/crc32": "^1.7.2",
     "yauzl": "^2.10.0",
     "yauzl-clone": "^2.0.0"
   },
